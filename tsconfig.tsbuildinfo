@@ -1,1 +1,1 @@
-{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/glitchtext.tsx","./src/lib/sound.ts"],"version":"5.7.3"}
+{"root":["./src/app.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/components/achievementdrawer.tsx","./src/components/achievementtoast.tsx","./src/components/glitchtext.tsx","./src/lib/consolemanual.ts","./src/lib/hintsdata.ts","./src/lib/sound.ts","./src/store/usesandboxstore.ts"],"version":"5.7.3"}
