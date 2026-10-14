@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    border-radius: 0 !important;
+  }
+
+  body {
+    background-color: #F6F5F0;
+    color: #111315;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+}
+
+/* Tabular figures for ledger accuracy */
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Institutional Ledger Grid lines */
+.ledger-grid {
+  background-image: linear-gradient(to right, rgba(214, 211, 205, 0.4) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(214, 211, 205, 0.4) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Subtle chromatic glitch effect */
+.glitch-active {
+  position: relative;
+  display: inline-block;
+  color: #8B1E1E !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  text-shadow: -2px 0 #00ffff, 2px 0 #ff0055;
+  animation: glitch-anim 0.16s ease-in-out infinite alternate;
+}
+
+@keyframes glitch-anim {
+  0% {
+    transform: skewX(-2deg);
+    text-shadow: -2px 0 #00ffff, 2px 0 #ff0055;
+  }
+  50% {
+    transform: skewX(2deg);
+    text-shadow: 2px 0 #00ffff, -2px 0 #ff0055;
+  }
+  100% {
+    transform: skewX(0deg);
+    text-shadow: -1px 0 #00ffff, 1px 0 #ff0055;
+  }
+}
+
+/* Scanline tear on hover / achievement trigger */
+.glitch-edge {
+  position: relative;
+}
+
+.glitch-edge:hover::after,
+.glitch-edge.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(10, 54, 34, 0.08) 0px,
+    rgba(10, 54, 34, 0.08) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  pointer-events: none;
+  animation: scanline-jitter 0.25s linear;
+}
+
+@keyframes scanline-jitter {
+  0% {
+    clip-path: inset(0 0 85% 0);
+  }
+  25% {
+    clip-path: inset(40% 0 30% 0);
+  }
+  50% {
+    clip-path: inset(70% 0 10% 0);
+  }
+  75% {
+    clip-path: inset(15% 0 60% 0);
+  }
+  100% {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Xbox Toast Entry Animation */
+@keyframes toast-slide-up {
+  0% {
+    transform: translateY(120%) scale(0.96);
+    opacity: 0;
+  }
+  60% {
+    transform: translateY(-8px) scale(1.02);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-toast {
+  animation: toast-slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
