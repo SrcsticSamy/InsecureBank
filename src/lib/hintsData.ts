@@ -48,6 +48,11 @@ export const HINTS_DATABASE: Record<number, HintTiers> = {
     tier2: " poorly designed systems sometimes 'fail open' inside their `catch` blocks when an unexpected parsing error occurs.",
     tier3: "Break the JSON syntax in the `/swift-import` payload box (for example, type `{CORRUPT_PAYLOAD` or delete half the JSON) and click 'Execute Batch Settlement'.",
   },
+  9: {
+    tier1: "Navigate to `/heist`. The 50M Sovereign Vault requires chaining 4 flaws: leaked master key, forged clearance token, Chairman vault PIN, and negative wire logic.",
+    tier2: "Key 1 is leaked in `/.env` or `/swift-import` (`AEGIS_ROOT_99481_X`). For Stage 2, forge `aegis_clearance_token` with `role: SOVEREIGN`. For Stage 3, inspect Chairman's vault `#1` for the Gotthard PIN.",
+    tier3: "Enter `AEGIS_ROOT_99481_X` for Stage 1, set token `{ user: 'a.sterling', role: 'SOVEREIGN', clearance: 'TIER_0' }` for Stage 2, enter PIN `GOTTHARD-GOLD-1894` for Stage 3, then authorize the 50,000,000 CHF wire.",
+  },
 }
 
 export const REMEDIATIONS: Record<number, RemediationDebrief> = {
@@ -187,5 +192,19 @@ async function verifyExecutiveAccess(user, hardwareChallengeSignature) {
 // 5. Automated Static & Dynamic Application Security Testing (SAST/DAST) in CI/CD`,
     remediationSummary:
       'Modern financial systems require defense-in-depth: combining rigorous input validation, least privilege, robust cryptography, and fail-closed state machines.',
+  },
+  9: {
+    vulnTitle: 'The Sovereign Heist — Attack Chain & Multi-Vector Exploitation',
+    owaspReference: 'MITRE ATT&CK & OWASP Top 10 Multi-Stage Chaining',
+    mechanismExplanation:
+      'Attackers rarely exploit isolated bugs in a vacuum. By chaining information disclosure (.env leak), broken authentication (unencrypted token forgery), broken access control (IDOR on executive vault), and business logic manipulation (fail-open batch & negative fees), the entire reserve liquidity pool was compromised.',
+    remediationCode: `// Multi-Vector Defense Pipeline:
+// 1. Secret Management: Store keys in HashiCorp Vault or AWS KMS (never in .env or error traces).
+// 2. Cryptographic Sessions: Sign tokens with asymmetric keys (RS256 / Ed25519) in httpOnly cookies.
+// 3. Multi-Tenant Authorization: Object-level authorization policy (PEP / PDP) on all dossier lookups.
+// 4. Strict Financial Invariants: Invariant assertions: assert(transferAmount > 0 && balance >= transferAmount).
+// 5. Automated Fraud Detection: Dual-control approval (maker-checker rule) for any settlement > CHF 1,000,000.`,
+    remediationSummary:
+      'Mitigate attack chains by breaking intermediary links: protect internal secrets, sign session claims cryptographically, enforce object-level authorization, and mandate multi-party authorization for high-value wires.',
   },
 }

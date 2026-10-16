@@ -15,6 +15,7 @@ import { SwiftImportPage } from './pages/SwiftImportPage'
 import { HeritagePage } from './pages/HeritagePage'
 import { RobotsPage } from './pages/RobotsPage'
 import { EnvPage } from './pages/EnvPage'
+import { HeistPage } from './pages/HeistPage'
 
 // Root route wrapping all pages in institutional layout
 const rootRoute = createRootRoute({
@@ -73,6 +74,12 @@ const heritageRoute = createRoute({
   component: HeritagePage,
 })
 
+const heistRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/heist',
+  component: HeistPage,
+})
+
 // Dedicated special routes for OWASP A02:2025
 const robotsRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -101,6 +108,7 @@ const routeTree = rootRoute.addChildren([
   executiveRoute,
   swiftImportRoute,
   heritageRoute,
+  heistRoute,
   robotsRoute,
   dotEnvRoute,
   envRoute,

@@ -141,7 +141,23 @@ export const ACHIEVEMENTS_LIST: AchievementItem[] = [
     description: 'Mastered the complete OWASP Top 10 (2025) threat landscape across all Aegis banking subsystems.',
     route: 'All Exploits Completed',
   },
+  {
+    id: 9,
+    owaspCode: 'HEIST',
+    title: 'The Sovereign Heist',
+    points: 250,
+    description: 'Chained 4 multi-vector exploits to infiltrate and drain the 50,000,000 CHF Swiss Confederation Sovereign Vault.',
+    route: '/heist',
+  },
 ]
+
+export interface HeistState {
+  stage1MasterKeyHarvested: boolean
+  stage2TokenForged: boolean
+  stage3VaultInfiltrated: boolean
+  stage4Drained: boolean
+  sovereignVaultBalance: number
+}
 
 interface SandboxState {
   vaultBalance: number
@@ -152,6 +168,7 @@ interface SandboxState {
   unlockedAchievements: number[]
   toastQueue: ToastItem[]
   drawerOpen: boolean
+  heist: HeistState
 
   // Actions
   unlockAchievement: (id: number) => void
@@ -160,6 +177,11 @@ interface SandboxState {
   setVaultBalance: (newBalance: number) => void
   addTransaction: (tx: Omit<Transaction, 'id' | 'date'>) => void
   setClearance: (clearance: string, role: string) => void
+  setHeistStage1: (val: boolean) => void
+  setHeistStage2: (val: boolean) => void
+  setHeistStage3: (val: boolean) => void
+  executeHeistDrain: () => void
+  resetHeist: () => void
   resetSandbox: () => void
 }
 
@@ -174,6 +196,13 @@ export const useSandboxStore = create<SandboxState>()(
       unlockedAchievements: [],
       toastQueue: [],
       drawerOpen: false,
+      heist: {
+        stage1MasterKeyHarvested: false,
+        stage2TokenForged: false,
+        stage3VaultInfiltrated: false,
+        stage4Drained: false,
+        sovereignVaultBalance: 50000000.0,
+      },
 
       unlockAchievement: (id: number) => {
         const state = get()
@@ -242,6 +271,70 @@ export const useSandboxStore = create<SandboxState>()(
         set({ clearance, role })
       },
 
+      setHeistStage1: (val: boolean) => {
+        set((state) => ({
+          heist: { ...state.heist, stage1MasterKeyHarvested: val },
+        }))
+      },
+
+      setHeistStage2: (val: boolean) => {
+        set((state) => ({
+          heist: { ...state.heist, stage2TokenForged: val },
+        }))
+      },
+
+      setHeistStage3: (val: boolean) => {
+        set((state) => ({
+          heist: { ...state.heist, stage3VaultInfiltrated: val },
+        }))
+      },
+
+      executeHeistDrain: () => {
+        const state = get()
+        if (state.heist.stage4Drained) return
+
+        // Drain 50M CHF to client vault
+        const drainedAmount = 50000000.0
+        const updatedVaultBalance = state.vaultBalance + drainedAmount
+
+        const now = new Date()
+        const dateStr = now.toISOString().replace('T', ' ').slice(0, 19)
+        const heistTx: Transaction = {
+          id: 'TXN-HEIST-0001-EXFIL',
+          date: dateStr,
+          recipient: 'Chairman Sovereign Reserve (Direct Vault Exfiltration)',
+          amount: drainedAmount,
+          type: 'CREDIT',
+          classification: 'CLASSIFIED',
+          memo: '[OPERATION SOVEREIGN HEIST] Automated emergency liquidity drain via forged root credentials',
+          status: 'OVERRIDE',
+        }
+
+        set({
+          vaultBalance: updatedVaultBalance,
+          transactions: [heistTx, ...state.transactions],
+          heist: {
+            ...state.heist,
+            stage4Drained: true,
+            sovereignVaultBalance: 0,
+          },
+        })
+
+        get().unlockAchievement(9)
+      },
+
+      resetHeist: () => {
+        set((state) => ({
+          heist: {
+            stage1MasterKeyHarvested: false,
+            stage2TokenForged: false,
+            stage3VaultInfiltrated: false,
+            stage4Drained: false,
+            sovereignVaultBalance: 50000000.0,
+          },
+        }))
+      },
+
       resetSandbox: () => {
         const initialToken = btoa(
           JSON.stringify({ user: 'h.vance', role: 'CLIENT', clearance: 'TIER_1' }),
@@ -258,6 +351,13 @@ export const useSandboxStore = create<SandboxState>()(
           unlockedAchievements: [],
           toastQueue: [],
           drawerOpen: false,
+          heist: {
+            stage1MasterKeyHarvested: false,
+            stage2TokenForged: false,
+            stage3VaultInfiltrated: false,
+            stage4Drained: false,
+            sovereignVaultBalance: 50000000.0,
+          },
         })
       },
     }),

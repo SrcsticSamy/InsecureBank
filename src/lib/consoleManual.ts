@@ -33,17 +33,19 @@ export function initConsoleManual(): void {
 
   const manual = {
     help: () => {
+      const maxG = ACHIEVEMENTS_LIST.reduce((sum, a) => sum + a.points, 0)
       console.log(
         `%c=== AEGIS PRIVATE WEALTH // SECURITY AUDITOR MANUAL ===\n` +
           `\n` +
           `Available Console Commands:\n` +
-          `  manual.missions()          - View all 7 OWASP Top 10 (2025) targets & breach status\n` +
+          `  manual.missions()          - View all OWASP Top 10 (2025) targets & breach status\n` +
+          `  manual.heist()             - Inspect Operation Sovereign Heist 4-stage campaign\n` +
           `  manual.hint(id, tier)      - Request progressive hint (tier 1, 2, or 3)\n` +
           `  manual.status()            - Display current Gamerscore and compromised subsystems\n` +
           `  manual.reset()             - Wipe sandbox progress, restore tokens, and reload page\n` +
           `\n` +
-          `Quick Aliases: help(), hint(id, tier)\n` +
-          `Total Target Gamerscore: 1,000 G`,
+          `Quick Aliases: help(), hint(id, tier), heist()\n` +
+          `Total Target Gamerscore: ${maxG} G`,
         'color: #111315; font-family: monospace; font-size: 12px; line-height: 1.5;',
       )
     },
@@ -75,11 +77,32 @@ export function initConsoleManual(): void {
         `%c[PLATINUM] Full Stack Menace (50 G) - Status: ${isPlatinum ? 'ACQUIRED' : 'PENDING 7/7 EXPLOITS'}`,
         'color: #8C6D3F; font-weight: bold;',
       )
+      const isHeist = state.unlockedAchievements.includes(9)
+      console.log(
+        `%c[HEIST] The Sovereign Heist (250 G) - Status: ${isHeist ? 'HEIST COMPLETED (50M DRAINED)' : 'CAMPAIGN PENDING (/heist)'}`,
+        'color: #8B1E1E; font-weight: bold;',
+      )
+    },
+
+    heist: () => {
+      const state = useSandboxStore.getState()
+      const h = state.heist
+      console.log(
+        `%c=== OPERATION: THE SOVEREIGN HEIST (CAMPAIGN STATUS) ===\n` +
+          `Target: Swiss Sovereign Reserve (#CH-0001-ALPHA)\n` +
+          `Reserve Balance: CHF ${h.sovereignVaultBalance.toLocaleString('de-CH', { minimumFractionDigits: 2 })}\n` +
+          `Stage 1 (Recon Root Key):        ${h.stage1MasterKeyHarvested ? '[✓] COMPROMISED' : '[ ] PENDING'}\n` +
+          `Stage 2 (Session Forgery):       ${h.stage2TokenForged ? '[✓] COMPROMISED' : '[ ] PENDING'}\n` +
+          `Stage 3 (Chairman Vault IDOR):   ${h.stage3VaultInfiltrated ? '[✓] COMPROMISED' : '[ ] PENDING'}\n` +
+          `Stage 4 (50M Liquidity Wire):    ${h.stage4Drained ? '[✓] EXFILTRATED (250 G)' : '[ ] ARMED'}\n` +
+          `Launch in browser: /heist`,
+        'color: #8B1E1E; font-family: monospace; font-size: 12px; font-weight: bold; line-height: 1.5;',
+      )
     },
 
     hint: (id: number, tier: 1 | 2 | 3 = 1) => {
-      if (!id || id < 1 || id > 7) {
-        console.warn('Invalid Mission ID. Use manual.hint(id, tier) where id is 1 to 7.')
+      if (!id || id < 1 || id > 9) {
+        console.warn('Invalid Mission ID. Use manual.hint(id, tier) where id is 1 to 9.')
         return
       }
       const hintData = HINTS_DATABASE[id]
@@ -103,13 +126,15 @@ export function initConsoleManual(): void {
         const item = ACHIEVEMENTS_LIST.find((a) => a.id === id)
         return sum + (item ? item.points : 0)
       }, 0)
+      const maxG = ACHIEVEMENTS_LIST.reduce((sum, a) => sum + a.points, 0)
 
       console.log(
         `%c=== AEGIS BREACH SCORECARD ===\n` +
-          `Gamerscore: ${totalPoints} / 1000 G\n` +
-          `Compromised Subsystems: ${state.unlockedAchievements.length} / 8\n` +
+          `Gamerscore: ${totalPoints} / ${maxG} G\n` +
+          `Compromised Subsystems: ${state.unlockedAchievements.length} / ${ACHIEVEMENTS_LIST.length}\n` +
           `Active Clearance: ${state.clearance} (${state.role})\n` +
-          `Vault Balance: CHF ${state.vaultBalance.toLocaleString('de-CH', { minimumFractionDigits: 2 })}`,
+          `Vault Balance: CHF ${state.vaultBalance.toLocaleString('de-CH', { minimumFractionDigits: 2 })}\n` +
+          `Sovereign Reserve Vault: CHF ${state.heist.sovereignVaultBalance.toLocaleString('de-CH', { minimumFractionDigits: 2 })}`,
         'color: #0A3622; font-family: monospace; font-size: 12px; font-weight: bold;',
       )
     },
@@ -127,4 +152,5 @@ export function initConsoleManual(): void {
   window.manual = manual
   window.help = manual.help
   window.hint = manual.hint
+  window.heist = manual.heist
 }

@@ -17,6 +17,8 @@ export const AchievementDrawer: React.FC = () => {
     return sum + (ach ? ach.points : 0)
   }, 0)
 
+  const maxPoints = ACHIEVEMENTS_LIST.reduce((sum, a) => sum + a.points, 0)
+
   if (!isOpen) return null
 
   const toggleExpand = (id: number) => {
@@ -56,7 +58,7 @@ export const AchievementDrawer: React.FC = () => {
                   Security Dossier
                 </h3>
                 <span className="font-mono text-xs bg-[#0A3622] text-[#F6F5F0] px-2 py-0.5 border border-[#8C6D3F]">
-                  {totalPoints} / 1000 G
+                  {totalPoints} / {maxPoints} G
                 </span>
               </div>
               <p className="text-xs text-[#5A5D64] uppercase tracking-wider font-mono">
@@ -79,7 +81,7 @@ export const AchievementDrawer: React.FC = () => {
         <div className="w-full bg-[#ECEAE2] h-2">
           <div
             className="bg-[#0A3622] h-full transition-all duration-500"
-            style={{ width: `${(totalPoints / 1000) * 100}%` }}
+            style={{ width: `${Math.min(100, (totalPoints / (maxPoints || 1)) * 100)}%` }}
           />
         </div>
 

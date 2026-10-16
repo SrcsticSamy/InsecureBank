@@ -12,6 +12,7 @@ import {
   FileCode2,
   BookOpen,
   AlertTriangle,
+  Skull,
 } from 'lucide-react'
 import { useSandboxStore, ACHIEVEMENTS_LIST } from '../store/useSandboxStore'
 import { AchievementToast } from './AchievementToast'
@@ -37,6 +38,8 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     const ach = ACHIEVEMENTS_LIST.find((a) => a.id === id)
     return sum + (ach ? ach.points : 0)
   }, 0)
+
+  const maxPoints = ACHIEVEMENTS_LIST.reduce((sum, a) => sum + a.points, 0)
 
   // Check for debug=true parameter in URL
   useEffect(() => {
@@ -93,6 +96,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     { to: '/executive', label: 'Sovereign Board Terminal', icon: Lock },
     { to: '/swift-import', label: 'SWIFT Batch Settlement', icon: FileCode2 },
     { to: '/heritage', label: 'Heritage & Governance', icon: BookOpen },
+    { to: '/heist', label: 'Operation: Sovereign Heist', icon: Skull, isHeist: true },
   ]
 
   return (
@@ -167,7 +171,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             className="flex items-center gap-2 bg-[#0A3622] text-[#F6F5F0] border border-[#8C6D3F] px-3.5 py-1.5 text-xs font-mono font-bold hover:bg-[#072618] transition-colors shadow-sm"
           >
             <Trophy className="w-4 h-4 text-[#8C6D3F]" />
-            <span>[🏆 {totalPoints} / 1000 G]</span>
+            <span>[🏆 {totalPoints} / {maxPoints} G]</span>
           </button>
         </div>
       </header>
@@ -201,11 +205,15 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
                   search={item.search}
                   className={`flex items-center gap-3 px-3 py-2.5 text-xs font-mono transition-colors border-l-2 ${
                     isActive
-                      ? 'bg-white border-[#0A3622] text-[#0A3622] font-bold shadow-sm'
+                      ? item.isHeist
+                        ? 'bg-[#111315] border-[#8B1E1E] text-[#ff5555] font-bold shadow-sm'
+                        : 'bg-white border-[#0A3622] text-[#0A3622] font-bold shadow-sm'
+                      : item.isHeist
+                      ? 'border-transparent text-[#8B1E1E] hover:bg-[#8B1E1E]/10 font-bold'
                       : 'border-transparent text-[#5A5D64] hover:bg-[#ECEAE2] hover:text-[#111315]'
                   }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <Icon className={`w-4 h-4 shrink-0 ${item.isHeist ? 'text-[#8B1E1E]' : ''}`} />
                   <span className="truncate">{item.label}</span>
                 </Link>
               )
